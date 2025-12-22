@@ -1,0 +1,58 @@
+name: Automated Preprocessing Pipeline
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'diabetes_prediction_dataset_raw/**'
+      - 'preprocessing/automate_Riffa-Putra.py'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'diabetes_prediction_dataset_raw/**'
+      - 'preprocessing/automate_Riffa-Putra.py'
+  workflow_dispatch:
+
+jobs:
+  preprocessing:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scikit-learn
+      
+      - name: Run Preprocessing Pipeline
+        run: |
+          python preprocessing/automate_Riffa-Putra.py \
+            --input diabetes_prediction_dataset_raw/diabetes_prediction_dataset.csv \
+            --output preprocessing/diabetes_dataset_preprocessing/diabetes_dataset_processed.csv
+      
+      - name: Upload Processed Dataset
+        uses: actions/upload-artifact@v4
+        with:
+          name: processed-dataset-${{ github.sha }}
+          path: preprocessing/diabetes_dataset_preprocessing/diabetes_dataset_processed.csv
+          retention-days: 30
+      
+      - name: Commit Processed Dataset
+        if: github.event_name != 'pull_request'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add preprocessing/diabetes_dataset_preprocessing/diabetes_dataset_processed.csv
+          
+          # Commit hanya jika ada perubahan, tanpa echo berlebih
+          git diff --staged --quiet || (git commit -m "chore: update processed dataset [automated]" && git push)
