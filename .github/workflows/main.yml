@@ -3,14 +3,8 @@ name: Automated Preprocessing Pipeline
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'diabetes_prediction_dataset_raw/**'
-      - 'preprocessing/automate_Riffa-Putra.py'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'diabetes_prediction_dataset_raw/**'
-      - 'preprocessing/automate_Riffa-Putra.py'
   workflow_dispatch:
 
 jobs:
