@@ -3,15 +3,8 @@ name: Automated Preprocessing Pipeline
 on:
   push:
     branches: [ main ]
-    paths:
-      # Trigger jika ada perubahan pada raw dataset atau script python
-      - 'Eksperimen_SML_Riffa-Putra/diabetes_prediction_dataset.csv'
-      - 'Eksperimen_SML_Riffa-Putra/preprocessing/automate_Riffa-Putra.py'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'Eksperimen_SML_Riffa-Putra/diabetes_prediction_dataset.csv'
-      - 'Eksperimen_SML_Riffa-Putra/preprocessing/automate_Riffa-Putra.py'
   workflow_dispatch:
 
 jobs:
@@ -37,14 +30,14 @@ jobs:
       - name: Run Preprocessing Pipeline
         run: |
           python preprocessing/automate_Riffa-Putra.py \
-            --input Eksperimen_SML_Riffa-Putra/diabetes_prediction_dataset_raw/diabetes_prediction_dataset.csv \
-            --output Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_preprocessing/diabetes_dataset_processed.csv
+            --input Eksperimen_SML_Riffa-Putra/diabetes_prediction_dataset.csv \
+            --output Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_processed.csv
       
       - name: Upload Processed Dataset
         uses: actions/upload-artifact@v4
         with:
           name: processed-dataset-${{ github.sha }}
-          path: Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_preprocessing/diabetes_dataset_processed.csv
+          path: Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_processed.csv
           retention-days: 30
       
       - name: Commit Processed Dataset
@@ -52,7 +45,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_preprocessing/diabetes_dataset_processed.csv
+          git add Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_processed.csv
           
           # Commit hanya jika ada perubahan, tanpa echo berlebih
           git diff --staged --quiet || (git commit -m "chore: update processed dataset [automated]" && git push)
