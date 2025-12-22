@@ -29,7 +29,7 @@ jobs:
       
       - name: Run Preprocessing Pipeline
         run: |
-          python preprocessing/automate_Riffa-Putra.py \
+          python Eksperimen_SML_Riffa-Putra/preprocessing/automate_Riffa-Putra.py \
             --input Eksperimen_SML_Riffa-Putra/diabetes_prediction_dataset.csv \
             --output Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_processed.csv
       
@@ -47,5 +47,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add Eksperimen_SML_Riffa-Putra/preprocessing/diabetes_dataset_processed.csv
           
-          # Commit hanya jika ada perubahan, tanpa echo berlebih
           git diff --staged --quiet || (git commit -m "chore: update processed dataset [automated]" && git push)
